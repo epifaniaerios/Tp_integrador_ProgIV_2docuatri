@@ -3,24 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Registro de Incidencias Municipales</title>
-  <!-- Bootstrap 5 CSS -->
+  <title>Sistema de Incidencias Municipales - Login</title>
+  <!-- CDN Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body class="bg-light d-flex align-items-center vh-100">
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="#">Intranet Municipal - Incidencias</a>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4">
+            <h4 class="card-title text-center mb-4 text-primary fw-bold">Gestión de Incidencias</h4>
+            <h6 class="text-center text-muted mb-4">Iniciar Sesión</h6>
+            
+            <div id="alert-container"></div>
+
+            <form id="login-form">
+              <div class="mb-3">
+                <label for="usuario" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" id="usuario" placeholder="usuario@municipio.gob.ar" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="contrasenia" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="contrasenia" placeholder="••••••••" required>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 fw-semibold">Ingresar</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-  </nav>
-
-  <div class="container text-center py-5">
-    <h1 class="display-6">Bienvenido al Sistema de Incidencias</h1>
-    <p class="lead text-muted">Panel de Inicio de Sesión y Gestión</p>
-    <a href="#" class="btn btn-primary btn-lg mt-3">Iniciar Sesión</a>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>

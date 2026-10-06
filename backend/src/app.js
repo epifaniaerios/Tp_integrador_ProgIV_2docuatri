@@ -5,13 +5,23 @@ require('dotenv').config();
 
 const pool = require('./config/db');
 
+// --- Importación de Rutas ---
+const authRoutes = require('./routes/authRoutes');
+const categoriaRoutes = require('./routes/categoriaRoutes');
+const incidenciaRoutes = require('./routes/incidenciaRoutes');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // --- Middlewares Globales ---
 app.use(cors());
 app.use(express.json());
-app.use(morgan('dev')); // Middleware de Registro de Solicitudes
+app.use(morgan('dev')); // Registro de solicitudes HTTP
+
+// --- Registrar Rutas de la API ---
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/categorias', categoriaRoutes);
+app.use('/api/v1/incidencias', incidenciaRoutes);
 
 // --- Ruta de Verificación de Salud de la API ---
 app.get('/api/v1/health', async (req, res) => {
@@ -33,6 +43,6 @@ app.get('/api/v1/health', async (req, res) => {
 
 // --- Iniciar Servidor ---
 app.listen(PORT, () => {
-  console.log(` Servidor corriendo en el puerto http://localhost:${PORT}`);
-  console.log(` Prueba de conexión en: http://localhost:${PORT}/api/v1/health`);
+  console.log(`Servidor corriendo en: http://localhost:${PORT}`);
+  console.log(`Prueba de conexión en: http://localhost:${PORT}/api/v1/health`);
 });
