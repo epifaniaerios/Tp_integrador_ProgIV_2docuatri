@@ -26,7 +26,9 @@ function cerrarSesion() {
   window.location.href = 'index.html';
 }
 
-// 2. Obtener Categorías para el Selector del Modal
+
+// BREAD DE CATEGORÍAS 
+// 1. BROWSE / READ ALL: Obtener Categorías para el Selector del Modal
 async function cargarCategorias() {
   try {
     const res = await fetch(`${API_BASE}/categorias`, {
@@ -38,7 +40,7 @@ async function cargarCategorias() {
       const select = document.getElementById('id_categoria');
       select.innerHTML = '<option value="">Seleccione una categoría</option>';
       data.data.forEach(cat => {
-        select.innerHTML += `<option value="${cat.id_categoria}">${cat.nombre}</option>`;
+        select.innerHTML += `<option value="${cat.id_categoria}">${cat.descripcion}</option>`;
       });
     }
   } catch (error) {
@@ -46,7 +48,94 @@ async function cargarCategorias() {
   }
 }
 
-// 3. Obtener y Renderizar Incidencias
+// 2. READ ONE: Obtener una categoría específica
+async function obtenerCategoriaPorId(id) {
+  try {
+    const res = await fetch(`${API_BASE}/categorias/${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    return res.ok && data.status === 'OK' ? data.data : null;
+  } catch (error) {
+    console.error('Error al obtener la categoría:', error);
+    return null;
+  }
+}
+
+// 3. ADD: Crear Nueva Categoría
+async function crearCategoria(descripcion) {
+  try {
+    const res = await fetch(`${API_BASE}/categorias`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
+      },
+      body: JSON.stringify({ descripcion })
+    });
+    const data = await res.json();
+    
+    if (res.ok && data.status === 'OK') {
+      console.log('Categoría creada con éxito');
+      cargarCategorias(); // Recargar el select
+    } else {
+      alert(data.message || 'Error al crear la categoría');
+    }
+  } catch (error) {
+    console.error('Error al crear categoría', error);
+  }
+}
+
+// 4. EDIT: Actualizar una Categoría
+async function editarCategoria(id, nuevaDescripcion) {
+  try {
+    const res = await fetch(`${API_BASE}/categorias/${id}`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
+      },
+      body: JSON.stringify({ descripcion: nuevaDescripcion })
+    });
+    const data = await res.json();
+
+    if (res.ok && data.status === 'OK') {
+      console.log('Categoría actualizada con éxito');
+      cargarCategorias(); // Recargar el select
+    } else {
+      alert(data.message || 'Error al actualizar la categoría');
+    }
+  } catch (error) {
+    console.error('Error al editar categoría', error);
+  }
+}
+
+// 5. DELETE: Borrado Lógico de Categoría
+async function eliminarCategoria(id) {
+  if (!confirm(`¿Confirma eliminar la categoría #${id}?`)) return;
+  try {
+    const res = await fetch(`${API_BASE}/categorias/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    const data = await res.json();
+
+    if (res.ok && data.status === 'OK') {
+      console.log('Categoría eliminada (Soft Delete)');
+      cargarCategorias(); // Recargar el select
+    } else {
+      alert(data.message || 'No se pudo eliminar la categoría');
+    }
+  } catch (error) {
+    console.error('Error al eliminar categoría', error);
+  }
+}
+
+
+// GESTIÓN DE INCIDENCIAS
+
+// Obtener y Renderizar Incidencias
 async function cargarIncidencias() {
   const tbody = document.getElementById('tabla-incidencias');
   
@@ -89,7 +178,7 @@ async function cargarIncidencias() {
   }
 }
 
-// 4. Registrar Nueva Incidencia
+// Registrar Nueva Incidencia
 async function crearIncidencia(e) {
   e.preventDefault();
 
@@ -130,7 +219,7 @@ async function crearIncidencia(e) {
   }
 }
 
-// 5. Borrado Lógico (Soft Delete)
+// Borrado Lógico (Soft Delete) de Incidencia
 async function eliminarIncidencia(id) {
   if (!confirm(`¿Confirma eliminar la incidencia #${id}?`)) return;
 
