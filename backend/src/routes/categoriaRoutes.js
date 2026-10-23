@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import * as categoriaController from '../controllers/categoriaController.js';
+import { validarCategoria, validarIdParam } from '../middlewares/categoriaValidator.js';
+import { verificarToken, esAdmin } from '../middlewares/authMiddleware.js';
+
 const router = express.Router();
-const categoriaController = require('../controllers/categoriaController');
-const { validarCategoria, validarIdParam } = require('../middlewares/categoriaValidator');
-const { verificarToken, esAdmin } = require('../middlewares/authMiddleware');
 
 // Lectura de categorías (Usuarios autenticados)
 router.get('/', verificarToken, categoriaController.listar);
@@ -13,4 +14,4 @@ router.post('/', [verificarToken, esAdmin, validarCategoria], categoriaControlle
 router.put('/:id', [verificarToken, esAdmin, validarIdParam, validarCategoria], categoriaController.actualizar);
 router.delete('/:id', [verificarToken, esAdmin, validarIdParam], categoriaController.eliminar);
 
-module.exports = router;
+export default router;

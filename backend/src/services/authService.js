@@ -1,7 +1,7 @@
-const usuarioRepository = require('../repositories/usuarioRepository');
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+import * as usuarioRepository from '../repositories/usuarioRepository.js';
 
-const login = async (usuario, contrasenia) => {
+export const login = async (usuario, contrasenia) => {
   const user = await usuarioRepository.buscarPorUsuarioYClave(usuario, contrasenia);
 
   if (!user) {
@@ -32,8 +32,4 @@ const login = async (usuario, contrasenia) => {
       id_area: user.id_area,
     },
   };
-};
-
-module.exports = {
-  login,
 };

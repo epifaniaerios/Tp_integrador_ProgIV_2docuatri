@@ -1,14 +1,14 @@
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import 'dotenv/config';
 
-const pool = require('./config/db');
+import pool from './config/db.js';
 
 // --- Importación de Rutas ---
-const authRoutes = require('./routes/authRoutes');
-const categoriaRoutes = require('./routes/categoriaRoutes');
-const incidenciaRoutes = require('./routes/incidenciaRoutes');
+import authRoutes from './routes/authRoutes.js';
+import categoriaRoutes from './routes/categoriaRoutes.js';
+import incidenciaRoutes from './routes/incidenciaRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

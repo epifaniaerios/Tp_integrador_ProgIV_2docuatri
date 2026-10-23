@@ -1,6 +1,6 @@
-const authService = require('../services/authService');
+import * as authService from '../services/authService.js';
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { usuario, contrasenia } = req.body;
     const resultado = await authService.login(usuario, contrasenia);
@@ -17,8 +17,4 @@ const login = async (req, res) => {
       message: error.message || 'Error interno del servidor',
     });
   }
-};
-
-module.exports = {
-  login,
 };

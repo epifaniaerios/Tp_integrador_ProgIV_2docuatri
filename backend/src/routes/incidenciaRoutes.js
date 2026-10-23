@@ -1,20 +1,51 @@
-const express = require('express');
+import express from 'express';
+import * as incidenciaController from '../controllers/incidenciaController.js';
+import {
+  validarId,
+  validarIncidencia,
+  validarAsignacion,
+  validarResolucion,
+} from '../middlewares/incidenciaValidator.js';
+import { verificarToken, autorizarRoles } from '../middlewares/authMiddleware.js';
+import { ROLES } from '../config/constantes.js';
+
 const router = express.Router();
-const incidenciaController = require('../controllers/incidenciaController');
-const { validarIncidencia, validarEstado } = require('../middlewares/incidenciaValidator');
-const { verificarToken, esAdmin } = require('../middlewares/authMiddleware');
 
-// Ver incidencias (Usuarios autenticados)
 router.get('/', verificarToken, incidenciaController.listar);
-router.get('/:id', verificarToken, incidenciaController.obtenerPorId);
+router.get('/:id', verificarToken, validarId, incidenciaController.obtenerPorId);
 
-// Registrar nueva incidencia (Usuarios autenticados)
-router.post('/', verificarToken, validarIncidencia, incidenciaController.crear);
+router.post(
+  '/',
+  verificarToken,
+  autorizarRoles(ROLES.EMPLEADO_MUNICIPAL),
+  validarIncidencia,
+  incidenciaController.crear
+);
 
-// Cambiar estado de una incidencia (Usuarios autenticados)
-router.patch('/:id/estado', verificarToken, validarEstado, incidenciaController.cambiarEstado);
+router.patch(
+  '/:id/cancelar',
+  verificarToken,
+  autorizarRoles(ROLES.EMPLEADO_MUNICIPAL, ROLES.DIRECTOR_SISTEMAS),
+  validarId,
+  incidenciaController.cancelar
+);
 
-// Eliminar incidencia (Sólo Administradores)
-router.delete('/:id', [verificarToken, esAdmin], incidenciaController.eliminar);
+router.patch(
+  '/:id/asignar',
+  verificarToken,
+  autorizarRoles(ROLES.DIRECTOR_SISTEMAS),
+  validarId,
+  validarAsignacion,
+  incidenciaController.asignar
+);
 
-module.exports = router;
+router.patch(
+  '/:id/finalizar',
+  verificarToken,
+  autorizarRoles(ROLES.EMPLEADO_SISTEMAS),
+  validarId,
+  validarResolucion,
+  incidenciaController.finalizar
+);
+
+export default router;

@@ -1,6 +1,6 @@
-const pool = require('../config/db');
+import pool from '../config/db.js';
 
-const buscarPorUsuarioYClave = async (usuario, contrasenia) => {
+export const buscarPorUsuarioYClave = async (usuario, contrasenia) => {
   const query = `
     SELECT id_usuario, nombres, apellidos, usuario, rol, id_area, activo
     FROM usuarios
@@ -10,8 +10,4 @@ const buscarPorUsuarioYClave = async (usuario, contrasenia) => {
   `;
   const result = await pool.query(query, [usuario, contrasenia]);
   return result.rows[0];
-};
-
-module.exports = {
-  buscarPorUsuarioYClave,
 };

@@ -1,54 +1,39 @@
-const incidenciaService = require('../services/incidenciaService');
+import * as incidenciaService from '../services/incidenciaService.js';
 
-const listar = async (req, res) => {
+const manejar = (mensajeOk, statusOk, accion) => async (req, res) => {
   try {
-    const incidencias = await incidenciaService.obtenerIncidencias();
-    res.status(200).json({ status: 'OK', data: incidencias });
+    const data = await accion(req);
+    return res.status(statusOk).json({ status: 'OK', message: mensajeOk, data });
   } catch (error) {
-    res.status(error.status || 500).json({ status: 'ERROR', message: error.message });
+    const statusCode = error.status || 500;
+    if (statusCode === 500) console.error(error);
+    return res.status(statusCode).json({
+      status: 'ERROR',
+      message: error.message || 'Error interno del servidor',
+    });
   }
 };
 
-const obtenerPorId = async (req, res) => {
-  try {
-    const incidencia = await incidenciaService.obtenerIncidenciaPorId(req.params.id);
-    res.status(200).json({ status: 'OK', data: incidencia });
-  } catch (error) {
-    res.status(error.status || 500).json({ status: 'ERROR', message: error.message });
-  }
-};
+export const listar = manejar('Listado de incidencias', 200, (req) =>
+  incidenciaService.listar(req.usuario)
+);
 
-const crear = async (req, res) => {
-  try {
-    const nuevaIncidencia = await incidenciaService.registrarIncidencia(req.body);
-    res.status(201).json({ status: 'OK', message: 'Incidencia registrada con éxito', data: nuevaIncidencia });
-  } catch (error) {
-    res.status(error.status || 500).json({ status: 'ERROR', message: error.message });
-  }
-};
+export const obtenerPorId = manejar('Incidencia encontrada', 200, (req) =>
+  incidenciaService.obtenerPorId(req.params.id, req.usuario)
+);
 
-const cambiarEstado = async (req, res) => {
-  try {
-    const actualizada = await incidenciaService.actualizarEstado(req.params.id, req.body.estado);
-    res.status(200).json({ status: 'OK', message: 'Estado actualizado', data: actualizada });
-  } catch (error) {
-    res.status(error.status || 500).json({ status: 'ERROR', message: error.message });
-  }
-};
+export const crear = manejar('Incidencia creada correctamente', 201, (req) =>
+  incidenciaService.crear(req.body, req.usuario)
+);
 
-const eliminar = async (req, res) => {
-  try {
-    await incidenciaService.eliminarIncidencia(req.params.id);
-    res.status(200).json({ status: 'OK', message: 'Incidencia eliminada (Soft Delete)' });
-  } catch (error) {
-    res.status(error.status || 500).json({ status: 'ERROR', message: error.message });
-  }
-};
+export const cancelar = manejar('Incidencia cancelada', 200, (req) =>
+  incidenciaService.cancelar(req.params.id, req.usuario)
+);
 
-module.exports = {
-  listar,
-  obtenerPorId,
-  crear,
-  cambiarEstado,
-  eliminar,
-};
+export const asignar = manejar('Incidencia asignada', 200, (req) =>
+  incidenciaService.asignar(req.params.id, req.body.asignado_a)
+);
+
+export const finalizar = manejar('Incidencia finalizada', 200, (req) =>
+  incidenciaService.finalizar(req.params.id, req.body.descripcion_resolucion, req.usuario)
+);

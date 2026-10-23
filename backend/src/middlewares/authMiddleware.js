@@ -1,6 +1,7 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+import { ROLES } from '../config/constantes.js';
 
-const verificarToken = (req, res, next) => {
+export const verificarToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Extrae el token tras 'Bearer'
 
@@ -23,18 +24,17 @@ const verificarToken = (req, res, next) => {
   }
 };
 
-const esAdmin = (req, res, next) => {
-  if (req.usuario && req.usuario.rol === 'ADMIN') {
-    next();
-  } else {
-    return res.status(403).json({
-      status: 'ERROR',
-      message: 'Acceso denegado: Se requieren permisos de administrador',
-    });
+// Uso: autorizarRoles(ROLES.DIRECTOR_SISTEMAS, ROLES.EMPLEADO_SISTEMAS)
+// Va siempre DESPUÉS de verificarToken.
+export const autorizarRoles = (...rolesPermitidos) => (req, res, next) => {
+  if (req.usuario && rolesPermitidos.includes(req.usuario.rol)) {
+    return next();
   }
+  return res.status(403).json({
+    status: 'ERROR',
+    message: 'Acceso denegado: no tenés permisos para esta acción',
+  });
 };
 
-module.exports = {
-  verificarToken,
-  esAdmin,
-};
+// Se mantiene por compatibilidad: "admin" = Director del área de Sistemas
+export const esAdmin = autorizarRoles(ROLES.DIRECTOR_SISTEMAS);

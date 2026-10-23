@@ -1,41 +1,43 @@
-const { body, param, validationResult } = require('express-validator');
+import { body, param, validationResult } from 'express-validator';
 
-const validarIncidencia = [
-  body('titulo')
-    .notEmpty().withMessage('El título es obligatorio')
-    .isLength({ min: 5, max: 150 }).withMessage('El título debe contener entre 5 y 150 caracteres'),
-  body('descripcion')
-    .notEmpty().withMessage('La descripción es obligatoria'),
+const manejarErrores = (req, res, next) => {
+  const errores = validationResult(req);
+  if (!errores.isEmpty()) {
+    return res.status(400).json({
+      status: 'ERROR',
+      message: 'Error de validación',
+      errores: errores.array().map((e) => ({ campo: e.path, mensaje: e.msg })),
+    });
+  }
+  next();
+};
+
+export const validarId = [
+  param('id').isInt({ min: 1 }).withMessage('El id debe ser un número entero positivo'),
+  manejarErrores,
+];
+
+export const validarIncidencia = [
+  body('id_articulo').isInt({ min: 1 }).withMessage('id_articulo es obligatorio y debe ser numérico'),
+  body('descripcion_pedido')
+    .trim()
+    .notEmpty().withMessage('La descripción del pedido es obligatoria')
+    .isLength({ max: 250 }).withMessage('La descripción no puede superar los 250 caracteres'),
   body('prioridad')
     .optional()
-    .isIn(['BAJA', 'MEDIA', 'ALTA']).withMessage('Prioridad no válida (BAJA, MEDIA, ALTA)'),
-  body('id_categoria')
-    .isInt({ min: 1 }).withMessage('Debe especificar una categoría válida'),
-  body('id_usuario')
-    .isInt({ min: 1 }).withMessage('Debe especificar el ID del usuario reportante'),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ status: 'ERROR', errores: errors.array() });
-    }
-    next();
-  },
+    .isInt({ min: 1, max: 3 }).withMessage('La prioridad debe ser 1 (alta), 2 (media) o 3 (baja)'),
+  manejarErrores,
 ];
 
-const validarEstado = [
-  body('estado')
-    .isIn(['PENDIENTE', 'EN_PROCESO', 'RESUELTO', 'CANCELADO'])
-    .withMessage('Estado no válido'),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ status: 'ERROR', errores: errors.array() });
-    }
-    next();
-  },
+export const validarAsignacion = [
+  body('asignado_a').isInt({ min: 1 }).withMessage('asignado_a es obligatorio y debe ser numérico'),
+  manejarErrores,
 ];
 
-module.exports = {
-  validarIncidencia,
-  validarEstado,
-};
+export const validarResolucion = [
+  body('descripcion_resolucion')
+    .trim()
+    .notEmpty().withMessage('La descripción de la resolución es obligatoria')
+    .isLength({ max: 250 }).withMessage('La descripción no puede superar los 250 caracteres'),
+  manejarErrores,
+];

@@ -1,10 +1,10 @@
-const categoriaRepository = require('../repositories/categoriaRepository');
+import * as categoriaRepository from '../repositories/categoriaRepository.js';
 
-const obtenerCategorias = async () => {
+export const obtenerCategorias = async () => {
   return await categoriaRepository.listarTodas();
 };
 
-const obtenerCategoriaPorId = async (id) => {
+export const obtenerCategoriaPorId = async (id) => {
   const categoria = await categoriaRepository.buscarPorId(id);
   if (!categoria) {
     const error = new Error('Categoría no encontrada');
@@ -14,24 +14,16 @@ const obtenerCategoriaPorId = async (id) => {
   return categoria;
 };
 
-const crearCategoria = async (datos) => {
+export const crearCategoria = async (datos) => {
   return await categoriaRepository.crear(datos);
 };
 
-const actualizarCategoria = async (id, datos) => {
+export const actualizarCategoria = async (id, datos) => {
   await obtenerCategoriaPorId(id); // Valida que exista antes de editar
   return await categoriaRepository.actualizar(id, datos);
 };
 
-const eliminarCategoria = async (id) => {
+export const eliminarCategoria = async (id) => {
   await obtenerCategoriaPorId(id); // Valida que exista antes de dar borrado lógico
   return await categoriaRepository.eliminarLogico(id);
-};
-
-module.exports = {
-  obtenerCategorias,
-  obtenerCategoriaPorId,
-  crearCategoria,
-  actualizarCategoria,
-  eliminarCategoria,
 };

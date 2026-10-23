@@ -1,6 +1,6 @@
-const { body, validationResult } = require('express-validator');
+import { body, validationResult } from 'express-validator';
 
-const validarLogin = [
+export const validarLogin = [
   body('usuario')
     .notEmpty().withMessage('El usuario/correo es requerido')
     .isEmail().withMessage('Debe ingresar un correo electrónico válido'),
@@ -14,7 +14,3 @@ const validarLogin = [
     next();
   },
 ];
-
-module.exports = {
-  validarLogin,
-};
