@@ -9,6 +9,11 @@ import pool from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import categoriaRoutes from './routes/categoriaRoutes.js';
 import incidenciaRoutes from './routes/incidenciaRoutes.js';
+import articuloRoutes from './routes/articuloRoutes.js';
+import reporteRoutes from './routes/reporteRoutes.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './config/swagger.js';
+import usuarioRoutes from './routes/usuarioRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +27,10 @@ app.use(morgan('dev')); // Registro de solicitudes HTTP
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/categorias', categoriaRoutes);
 app.use('/api/v1/incidencias', incidenciaRoutes);
+app.use('/api/v1/articulos', articuloRoutes);
+app.use('/api/v1/reportes', reporteRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api/v1/usuarios', usuarioRoutes);
 
 // --- Ruta de Verificación de Salud de la API ---
 app.get('/api/v1/health', async (req, res) => {

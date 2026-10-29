@@ -1,10 +1,35 @@
 import * as incidenciaRepository from '../repositories/incidenciaRepository.js';
+import * as usuarioRepository from '../repositories/usuarioRepository.js';
+import { enviarCorreo } from './mailService.js';
 import { ROLES, ESTADOS } from '../config/constantes.js';
 
 const crearError = (status, mensaje) => {
   const error = new Error(mensaje);
   error.status = status;
   return error;
+};
+
+// Avisa por mail al creador de la incidencia. Nunca lanza error: si falla, solo se registra.
+const notificarCreador = async (incidencia, accion) => {
+  try {
+    const correo = await usuarioRepository.buscarCorreoPorId(incidencia.creado_por);
+    if (!correo) return;
+
+    let texto = `Hola ${incidencia.creado_por_nombre},\n\n` +
+      `Tu incidencia #${incidencia.id_incidencia} (${incidencia.articulo}) fue ${accion}.\n`;
+    if (incidencia.descripcion_resolucion) {
+      texto += `\nResolución: ${incidencia.descripcion_resolucion}\n`;
+    }
+    texto += '\nSistema de Registro de Incidencias';
+
+    await enviarCorreo({
+      para: correo,
+      asunto: `Incidencia #${incidencia.id_incidencia} ${accion}`,
+      texto,
+    });
+  } catch (error) {
+    console.error('No se pudo enviar el email de notificación:', error.message);
+  }
 };
 
 const obtenerVisible = async (id, usuario) => {
@@ -54,7 +79,9 @@ export const cancelar = async (id, usuario) => {
   }
 
   await incidenciaRepository.cambiarEstado({ id: incidencia.id_incidencia, id_estado: ESTADOS.CANCELADA });
-  return incidenciaRepository.buscarPorId(incidencia.id_incidencia);
+  const actualizada = await incidenciaRepository.buscarPorId(incidencia.id_incidencia);
+  notificarCreador(actualizada, 'cancelada'); // sin await: no demora la respuesta
+  return actualizada;
 };
 
 export const asignar = async (id, asignado_a) => {
@@ -92,5 +119,7 @@ export const finalizar = async (id, descripcion_resolucion, usuario) => {
     id_estado: ESTADOS.RESUELTA,
     descripcion_resolucion,
   });
-  return incidenciaRepository.buscarPorId(incidencia.id_incidencia);
+  const actualizada = await incidenciaRepository.buscarPorId(incidencia.id_incidencia);
+  notificarCreador(actualizada, 'finalizada'); // sin await: no demora la respuesta
+  return actualizada;
 };

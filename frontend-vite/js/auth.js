@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 const API_URL = 'http://localhost:3000/api/v1/auth/login';
 
 document.getElementById('login-form').addEventListener('submit', async (e) => {
