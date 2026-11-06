@@ -144,7 +144,7 @@ INSERT INTO public.articulos VALUES (3, 1, 1, 'Notebook HP', 1) ON CONFLICT DO N
 
 INSERT INTO public.estados VALUES (1, 'Pendiente', 1) ON CONFLICT DO NOTHING;
 INSERT INTO public.estados VALUES (2, 'En Proceso', 1) ON CONFLICT DO NOTHING;
-INSERT INTO public.estados VALUES (3, 'Resuela', 1) ON CONFLICT DO NOTHING;
+INSERT INTO public.estados VALUES (3, 'Resuelta', 1) ON CONFLICT DO NOTHING;
 INSERT INTO public.estados VALUES (4, 'Cancelada', 1) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.incidencias VALUES (1, 1, 1, 4, 1, '2026-09-11 18:47:38.751684+00', 1, 'descripción pedido', '') ON CONFLICT DO NOTHING;
