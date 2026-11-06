@@ -14,6 +14,7 @@ import reporteRoutes from './routes/reporteRoutes.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger.js';
 import usuarioRoutes from './routes/usuarioRoutes.js';
+import areaRoutes from './routes/areaRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +32,7 @@ app.use('/api/v1/articulos', articuloRoutes);
 app.use('/api/v1/reportes', reporteRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/v1/usuarios', usuarioRoutes);
+app.use('/api/v1/areas', areaRoutes);
 
 // --- Ruta de Verificación de Salud de la API ---
 app.get('/api/v1/health', async (req, res) => {

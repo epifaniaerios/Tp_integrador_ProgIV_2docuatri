@@ -23,6 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarArticulos();
   }
 
+  // Solo el empleado de Sistemas gestiona categorías y artículos
+  if (usuarioSesion.rol === 2) {
+    document.getElementById('link-gestion').classList.remove('d-none');
+  }
+
   cargarIncidencias();
 });
 
