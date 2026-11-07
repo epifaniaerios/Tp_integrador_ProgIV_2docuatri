@@ -16,6 +16,8 @@
       <a class="navbar-brand fw-bold" href="#">Municipalidad - Incidencias</a>
       <div class="d-flex align-items-center gap-3">
         <a id="link-gestion" href="gestion.html" class="btn btn-light btn-sm d-none">Categorías y artículos</a>
+        <a id="link-dashboard-director" href="director.html" class="btn btn-warning btn-sm fw-semibold d-none">Panel Director</a>
+        <button id="btn-modal-cambiar-clave" class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalCambiarClave">Cambiar Contraseña</button>
         <span id="user-info" class="text-white small fw-semibold"></span>
         <button id="btn-logout" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
       </div>
@@ -85,12 +87,13 @@
               </select>
             </div>
 
-            <div class="mb-3">
+            <!-- En el modal de Nueva Incidenci -->
+            <div class="mb-3" id="grupo-prioridad">
               <label for="prioridad" class="form-label">Prioridad</label>
-              <select class="form-select" id="prioridad" required>
-                <option value="BAJA">Baja</option>
-                <option value="MEDIA" selected>Media</option>
-                <option value="ALTA">Alta</option>
+              <select class="form-select" id="prioridad">
+                <option value="3">Baja</option>
+                <option value="2" selected>Media</option>
+                <option value="1">Alta</option>
               </select>
             </div>
 
@@ -107,6 +110,34 @@
       </div>
     </div>
   </div>
+  
+  <!-- Modal Cambiar Contraseña -->
+<div class="modal fade" id="modalCambiarClave" tabindex="-1" aria-labelledby="modalCambiarClaveLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalCambiarClaveLabel"> Cambiar Contraseña</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="form-cambiar-clave">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="clave-actual" class="form-label">Contraseña Actual</label>
+            <input type="password" class="form-control" id="clave-actual" required placeholder="Ingresá tu clave actual">
+          </div>
+          <div class="mb-3">
+            <label for="clave-nueva" class="form-label">Nueva Contraseña</label>
+            <input type="password" class="form-control" id="clave-nueva" required minlength="6" placeholder="Mínimo 6 caracteres">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
   <script type="module" src="./js/main.js"></script>
 </body>
