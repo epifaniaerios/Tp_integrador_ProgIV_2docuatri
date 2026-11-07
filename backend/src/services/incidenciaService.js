@@ -57,11 +57,16 @@ export const obtenerPorId = async (id, usuario) => {
 export const crear = async (datos, usuario) => {
   const articulo = await incidenciaRepository.articuloActivo(datos.id_articulo);
   if (!articulo) throw crearError(404, 'El artículo indicado no existe o está inactivo');
+  // Si el rol del usuario es Empleado Municipal (ROLES.EMPLEADO_MUNICIPAL), 
+  // la prioridad se fuerza en 2 (Media), sin importar qué mande el frontend.
+  const prioridadAsignada = (usuario.rol === ROLES.EMPLEADO_MUNICIPAL) 
+    ? 2 
+    : (datos.prioridad || 2);
 
   const id = await incidenciaRepository.crear({
     id_articulo: datos.id_articulo,
     descripcion_pedido: datos.descripcion_pedido,
-    prioridad: datos.prioridad || 2, // 1 = alta, 2 = media, 3 = baja
+    prioridad: datos.prioridadAsignada || 2, // 1 = alta, 2 = media, 3 = baja
     creado_por: usuario.id_usuario,
   });
   return incidenciaRepository.buscarPorId(id);
@@ -122,4 +127,15 @@ export const finalizar = async (id, descripcion_resolucion, usuario) => {
   const actualizada = await incidenciaRepository.buscarPorId(incidencia.id_incidencia);
   notificarCreador(actualizada, 'finalizada'); // sin await: no demora la respuesta
   return actualizada;
+};
+
+export const cambiarPrioridad = async (id, nuevaPrioridad) => {
+  const incidencia = await incidenciaRepository.buscarPorId(Number(id));
+  if (!incidencia) throw crearError(404, 'Incidencia no encontrada');
+
+  // Llama al repositorio para hacer la actualización en PostgreSQL
+  await incidenciaRepository.cambiarPrioridad(Number(id), nuevaPrioridad);
+
+  // Retorna la incidencia con sus datos actualizados
+  return incidenciaRepository.buscarPorId(Number(id));
 };
