@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-logout').addEventListener('click', cerrarSesion);
   document.getElementById('form-nueva-incidencia').addEventListener('submit', crearIncidencia);
 
-  // Solo el empleado municipal crea incidencias
-  if (usuarioSesion.rol === 1) {
+  // Solo el empleado municipal y director crea incidencias
+  if (usuarioSesion.rol === 1 || usuarioSesion.rol === 3) {
     document.getElementById('btn-nueva-incidencia').classList.remove('d-none');
     cargarArticulos();
   }
