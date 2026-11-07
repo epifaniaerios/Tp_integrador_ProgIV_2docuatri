@@ -15,9 +15,9 @@ const SELECT_BASE = `
     i.creado_por,
     uc.nombres || ' ' || uc.apellidos AS creado_por_nombre,
     CASE WHEN i.id_estado IN (${ESTADOS.EN_PROCESO}, ${ESTADOS.RESUELTA})
-         THEN i.asignado_a END AS asignado_a,
+          THEN i.asignado_a END AS asignado_a,
     CASE WHEN i.id_estado IN (${ESTADOS.EN_PROCESO}, ${ESTADOS.RESUELTA})
-         THEN ua.nombres || ' ' || ua.apellidos END AS asignado_a_nombre,
+          THEN ua.nombres || ' ' || ua.apellidos END AS asignado_a_nombre,
     i.creado,
     i.prioridad,
     i.descripcion_pedido,
@@ -76,9 +76,9 @@ export const crear = async ({ id_articulo, descripcion_pedido, prioridad, creado
     // asignado_a lleva el mismo valor que creado_por (provisorio hasta que el director asigne)
     const nueva = await client.query(
       `INSERT INTO incidencias
-         (id_articulo, id_estado, creado_por, asignado_a, prioridad, descripcion_pedido)
-       VALUES ($1, $2, $3, $3, $4, $5)
-       RETURNING id_incidencia`,
+          (id_articulo, id_estado, creado_por, asignado_a, prioridad, descripcion_pedido)
+        VALUES ($1, $2, $3, $3, $4, $5)
+        RETURNING id_incidencia`,
       [id_articulo, ESTADOS.PENDIENTE, creado_por, prioridad, descripcion_pedido]
     );
     const id = nueva.rows[0].id_incidencia;
@@ -102,10 +102,10 @@ export const cambiarEstado = async ({ id, id_estado, asignado_a = null, descripc
     await client.query('BEGIN');
     await client.query(
       `UPDATE incidencias
-       SET id_estado = $1,
-           asignado_a = COALESCE($2, asignado_a),
-           descripcion_resolucion = COALESCE($3, descripcion_resolucion)
-       WHERE id_incidencia = $4`,
+        SET id_estado = $1,
+            asignado_a = COALESCE($2, asignado_a),
+            descripcion_resolucion = COALESCE($3, descripcion_resolucion)
+        WHERE id_incidencia = $4`,
       [id_estado, asignado_a, descripcion_resolucion, id]
     );
     await client.query(
@@ -119,4 +119,11 @@ export const cambiarEstado = async ({ id, id_estado, asignado_a = null, descripc
   } finally {
     client.release();
   }
+};
+
+export const cambiarPrioridad = async (id, nuevaPrioridad) => {
+  await pool.query(
+    'UPDATE incidencias SET prioridad = $1 WHERE id_incidencia = $2',
+    [nuevaPrioridad, id]
+  );
 };
