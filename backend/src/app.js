@@ -15,6 +15,8 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger.js';
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import areaRoutes from './routes/areaRoutes.js';
+import path from 'path';
+import fs from 'fs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -51,6 +53,15 @@ app.get('/api/v1/health', async (req, res) => {
     });
   }
 });
+
+// Asegurar que exista la carpeta 'uploads'
+const uploadDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+// Servir la carpeta de imágenes públicamente
+app.use('/uploads', express.static(uploadDir));
 
 // --- Iniciar Servidor ---
 app.listen(PORT, () => {
