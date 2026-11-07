@@ -1,4 +1,4 @@
-mport express from 'express';
+import express from 'express';
 import * as incidenciaController from '../controllers/incidenciaController.js';
 import {
   validarId,
