@@ -37,3 +37,30 @@ export const asignar = manejar('Incidencia asignada', 200, (req) =>
 export const finalizar = manejar('Incidencia finalizada', 200, (req) =>
   incidenciaService.finalizar(req.params.id, req.body.descripcion_resolucion, req.usuario)
 );
+
+export const cambiarPrioridad = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { prioridad } = req.body;
+    
+    if (!prioridad || ![1, 2, 3].includes(Number(prioridad))) {
+      return res.status(400).json({
+        status: 'ERROR',
+        message: 'La prioridad debe ser 1 (Alta), 2 (Media) o 3 (Baja)',
+      });
+    }
+
+    const data = await incidenciaService.cambiarPrioridad(id, Number(prioridad));
+    
+    return res.status(200).json({
+      status: 'OK',
+      message: 'Prioridad actualizada con éxito',
+      data,
+    });
+  } catch (error) {
+    return res.status(error.status || 500).json({
+      status: 'ERROR',
+      message: error.message || 'Error al actualizar la prioridad',
+    });
+  }
+};
