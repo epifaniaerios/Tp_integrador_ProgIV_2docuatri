@@ -1,4 +1,4 @@
-import express from 'express';
+mport express from 'express';
 import * as incidenciaController from '../controllers/incidenciaController.js';
 import {
   validarId,
@@ -17,7 +17,7 @@ router.get('/:id', verificarToken, validarId, incidenciaController.obtenerPorId)
 router.post(
   '/',
   verificarToken,
-  autorizarRoles(ROLES.EMPLEADO_MUNICIPAL),
+  autorizarRoles(ROLES.EMPLEADO_MUNICIPAL, ROLES.EMPLEADO_SISTEMAS, ROLES.DIRECTOR_SISTEMAS),
   validarIncidencia,
   incidenciaController.crear
 );
@@ -46,6 +46,13 @@ router.patch(
   validarId,
   validarResolucion,
   incidenciaController.finalizar
+);
+
+router.patch(
+  '/:id/prioridad',
+  verificarToken,
+  autorizarRoles(ROLES.EMPLEADO_SISTEMAS, ROLES.DIRECTOR_SISTEMAS),
+  incidenciaController.cambiarPrioridad
 );
 
 export default router;
