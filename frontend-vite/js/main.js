@@ -28,6 +28,28 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('link-gestion').classList.remove('d-none');
   }
 
+  //Se muestra el botón si es director
+  if (usuarioSesion.rol === 3) {
+  const linkDirector = document.getElementById('link-dashboard-director');
+  if (linkDirector) linkDirector.classList.remove('d-none');
+}
+const selectPrioridad = document.getElementById('prioridad');
+  if (selectPrioridad) {
+    const contenedorPrioridad = selectPrioridad.closest('.mb-3') || selectPrioridad;
+    if (usuarioSesion.rol === 1) {
+      // Empleado municipal: oculta el campo de prioridad
+      contenedorPrioridad.classList.add('d-none');
+    } else {
+      // Sistemas (2) y Director (3): muestra el campo de prioridad
+      contenedorPrioridad.classList.remove('d-none');
+    }
+  }
+
+  const formClave = document.getElementById('form-cambiar-clave');
+  if (formClave) {
+    formClave.addEventListener('submit', cambiarContrasenia);
+  }
+
   cargarIncidencias();
 });
 
@@ -182,7 +204,6 @@ async function cargarArticulos() {
   }
 }
 
-// Botones que corresponden según el rol del usuario y el estado de la incidencia
 function botonesAccion(inc) {
   const botones = [];
   const rol = usuarioSesion.rol;
@@ -205,8 +226,19 @@ function botonesAccion(inc) {
     botones.push(`<button class="btn btn-outline-success btn-sm" data-accion="finalizar" data-id="${inc.id_incidencia}">Finalizar</button>`);
   }
 
+  // Si es Director o Sistemas, permite cambiar la prioridad si no está resuelta/cancelada
+  const puedeCambiarPrioridad = 
+    (rol === ROL.DIRECTOR || rol === ROL.SISTEMAS) && 
+    ![ESTADO.RESUELTA, ESTADO.CANCELADA].includes(inc.id_estado);
+
+  if (puedeCambiarPrioridad) {
+    botones.push(`<button class="btn btn-outline-warning btn-sm" data-accion="prioridad" data-id="${inc.id_incidencia}">Prioridad</button>`);
+  }
+
   return botones.length ? botones.join(' ') : '<span class="text-muted small">Sin acciones</span>';
 }
+
+
 
 // Obtener y Renderizar Incidencias
 async function cargarIncidencias() {
@@ -257,18 +289,28 @@ async function cargarIncidencias() {
 }
 
 // Registrar Nueva Incidencia
+// Registrar Nueva Incidencia
 async function crearIncidencia(e) {
   e.preventDefault();
 
   const titulo = document.getElementById('titulo').value.trim();
   const detalle = document.getElementById('descripcion').value.trim();
+  
+  // Obtenemos el elemento si existe en el DOM
+  const selectPrioridad = document.getElementById('prioridad');
   const prioridades = { ALTA: 1, MEDIA: 2, BAJA: 3 };
-  const valorPrioridad = document.getElementById('prioridad').value;
+  
+  // Si el usuario es Empleado Municipal (Rol 1) o no existe el select, la prioridad queda fija en 2 (MEDIA)
+  let prioridadFinal = 2;
+  if (usuarioSesion.rol !== 1 && selectPrioridad) {
+    const valor = selectPrioridad.value;
+    prioridadFinal = prioridades[valor] || Number(valor) || 2;
+  }
 
   const nueva = {
     id_articulo: parseInt(document.getElementById('id_categoria').value),
     descripcion_pedido: [titulo, detalle].filter(Boolean).join(' - ').slice(0, 250),
-    prioridad: prioridades[valorPrioridad] || Number(valorPrioridad) || 2,
+    prioridad: prioridadFinal,
   };
 
   try {
@@ -283,7 +325,7 @@ async function crearIncidencia(e) {
     if (res.ok && data.status === 'OK') {
       const modalEl = document.getElementById('modalIncidencia');
       const modal = bootstrap.Modal.getInstance(modalEl);
-      modal.hide();
+      if (modal) modal.hide();
 
       document.getElementById('form-nueva-incidencia').reset();
       cargarIncidencias();
@@ -317,6 +359,13 @@ async function accionIncidencia(id, accion, body) {
   }
 }
 
+// Funciones de acción
+async function cambiarPrioridadIncidencia(id) {
+  const nueva = prompt('Escribí la nueva prioridad:\n1 = Alta\n2 = Media\n3 = Baja');
+  if (!nueva || !['1', '2', '3'].includes(nueva.trim())) return;
+  accionIncidencia(id, 'prioridad', { prioridad: Number(nueva.trim()) });
+}
+
 function cancelarIncidencia(id) {
   if (!confirm(`¿Confirma cancelar la incidencia #${id}?`)) return;
   accionIncidencia(id, 'cancelar');
@@ -340,7 +389,7 @@ async function asignarIncidencia(id) {
       return;
     }
 
-    const lista = data.data.map((u) => `${u.id_usuario} - ${u.nombres} ${u.apellidos}`).join('\n');
+    const lista = data.data.map((u) => `${u.id_usuario}: ${u.nombres} ${u.apellidos}`).join('\n');
     const elegido = prompt(`Escribí el número del empleado a asignar:\n\n${lista}`);
     if (!elegido) return;
 
@@ -359,6 +408,7 @@ document.addEventListener('click', (e) => {
   if (accion === 'cancelar') cancelarIncidencia(id);
   if (accion === 'asignar') asignarIncidencia(id);
   if (accion === 'finalizar') finalizarIncidencia(id);
+  if (accion === 'prioridad') cambiarPrioridadIncidencia(id);
 });
 
 // Helpers para etiquetas visuales
@@ -380,4 +430,37 @@ function badgeEstado(id_estado, texto) {
     [ESTADO.CANCELADA]: 'bg-dark',
   };
   return `<span class="badge ${clases[id_estado] || 'bg-light text-dark'}">${escapeHtml(texto)}</span>`;
+}
+
+// Cambiar Contraseña de usuario
+async function cambiarContrasenia(e) {
+  e.preventDefault();
+
+  const claveActual = document.getElementById('clave-actual').value.trim();
+  const claveNueva = document.getElementById('clave-nueva').value.trim();
+
+  try {
+    const res = await fetch(`${API_BASE}/usuarios/cambiar-clave`, {
+      method: 'PATCH',
+      headers: authHeaders(),
+      body: JSON.stringify({ claveActual, claveNueva }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.status === 'OK') {
+      alert('¡Contraseña actualizada con éxito!');
+      
+      // Cerrar modal y limpiar campos
+      const modalEl = document.getElementById('modalCambiarClave');
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+
+      document.getElementById('form-cambiar-clave').reset();
+    } else {
+      alert(data.message || 'No se pudo cambiar la contraseña');
+    }
+  } catch (error) {
+    alert('Error al conectar con el servidor');
+  }
 }
