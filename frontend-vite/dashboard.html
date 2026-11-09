@@ -10,16 +10,22 @@
 <body class="bg-light">
 
   <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container">
       <a class="navbar-brand fw-bold" href="#">Municipalidad - Incidencias</a>
       <div class="d-flex align-items-center gap-3">
         <a id="link-articulos" href="articulos.html" class="btn btn-light btn-sm d-none">Artículos</a>
         <a id="link-gestion" href="gestion.html" class="btn btn-light btn-sm d-none">Categorías y artículos</a>
-        <a id="link-dashboard-director" href="director.html" class="btn btn-warning btn-sm fw-semibold d-none">Panel Director</a>
-        <button id="btn-modal-cambiar-clave" class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalCambiarClave">Cambiar Contraseña</button>
-        <span id="user-info" class="text-white small fw-semibold"></span>
-        <button id="btn-logout" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
+        <a id="link-dashboard-director" href="director.html" class="btn btn-warning btn-sm fw-semibold d-none">Panel
+          Director</a>
+        <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalAvatar">Foto de
+          perfil</button>
+        <button id="btn-modal-cambiar-clave" class="btn btn-outline-light btn-sm" data-bs-toggle="modal"
+          data-bs-target="#modalCambiarClave">Cambiar Contraseña</button>
+        <img id="user-avatar" class="rounded-circle d-none" width="32" height="32" style="object-fit: cover;"
+          alt="Foto de perfil">
+        <span id="user-info" class="text-white small fw-semibold"></span> <button id="btn-logout"
+          class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
       </div>
     </div>
   </nav>
@@ -109,35 +115,59 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Modal Cambiar Contraseña -->
-<div class="modal fade" id="modalCambiarClave" tabindex="-1" aria-labelledby="modalCambiarClaveLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="modalCambiarClaveLabel"> Cambiar Contraseña</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal fade" id="modalCambiarClave" tabindex="-1" aria-labelledby="modalCambiarClaveLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="modalCambiarClaveLabel"> Cambiar Contraseña</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="form-cambiar-clave">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="clave-actual" class="form-label">Contraseña Actual</label>
+              <input type="password" class="form-control" id="clave-actual" required
+                placeholder="Ingresá tu clave actual">
+            </div>
+            <div class="mb-3">
+              <label for="clave-nueva" class="form-label">Nueva Contraseña</label>
+              <input type="password" class="form-control" id="clave-nueva" required minlength="6"
+                placeholder="Mínimo 6 caracteres">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
+          </div>
+        </form>
       </div>
-      <form id="form-cambiar-clave">
-        <div class="modal-body">
-          <div class="mb-3">
-            <label for="clave-actual" class="form-label">Contraseña Actual</label>
-            <input type="password" class="form-control" id="clave-actual" required placeholder="Ingresá tu clave actual">
-          </div>
-          <div class="mb-3">
-            <label for="clave-nueva" class="form-label">Nueva Contraseña</label>
-            <input type="password" class="form-control" id="clave-nueva" required minlength="6" placeholder="Mínimo 6 caracteres">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
-        </div>
-      </form>
     </div>
   </div>
-</div>
-
+  <!-- Modal Foto de perfil -->
+  <div class="modal fade" id="modalAvatar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Foto de perfil</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="form-avatar">
+          <div class="modal-body">
+            <label for="archivo-avatar" class="form-label">Elegí una imagen (JPG, PNG o WEBP, máximo 2 MB)</label>
+            <input type="file" class="form-control" id="archivo-avatar" accept="image/jpeg,image/png,image/webp"
+              required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Subir foto</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
   <script type="module" src="./js/main.js"></script>
 </body>
 

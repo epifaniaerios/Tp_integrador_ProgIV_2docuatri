@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as bootstrap from 'bootstrap';
 const API_BASE = 'http://localhost:3000/api/v1';
+const BASE_ARCHIVOS = API_BASE.replace('/api/v1', '');
 const token = localStorage.getItem('token');
 const usuarioSesion = JSON.parse(localStorage.getItem('usuario') || '{}');
 
@@ -54,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (formClave) {
     formClave.addEventListener('submit', cambiarContrasenia);
   }
+
+  cargarAvatar();
+  const formAvatar = document.getElementById('form-avatar');
+  if (formAvatar) formAvatar.addEventListener('submit', subirAvatar);
 
   cargarIncidencias();
 });
@@ -464,6 +469,61 @@ async function cambiarContrasenia(e) {
       document.getElementById('form-cambiar-clave').reset();
     } else {
       alert(data.message || 'No se pudo cambiar la contraseña');
+    }
+  } catch (error) {
+    alert('Error al conectar con el servidor');
+  }
+}
+
+// Foto de perfil
+async function cargarAvatar() {
+  try {
+    const res = await fetch(`${API_BASE}/avatar`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (res.ok && data.status === 'OK' && data.data.avatar) {
+      mostrarAvatar(data.data.avatar);
+    }
+  } catch (error) {
+    console.error('Error al cargar el avatar:', error);
+  }
+}
+
+function mostrarAvatar(ruta) {
+  const img = document.getElementById('user-avatar');
+  img.src = `${BASE_ARCHIVOS}${ruta}?t=${Date.now()}`;
+  img.classList.remove('d-none');
+}
+
+async function subirAvatar(e) {
+  e.preventDefault();
+
+  const archivo = document.getElementById('archivo-avatar').files[0];
+  if (!archivo) {
+    alert('Seleccioná una imagen');
+    return;
+  }
+
+  // Con archivos se envía FormData; no se pone Content-Type, el navegador lo arma solo
+  const formData = new FormData();
+  formData.append('avatar', archivo);
+
+  try {
+    const res = await fetch(`${API_BASE}/avatar`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData,
+    });
+    const data = await res.json();
+
+    if (res.ok && data.status === 'OK') {
+      mostrarAvatar(data.data.avatar);
+      const modal = bootstrap.Modal.getInstance(document.getElementById('modalAvatar'));
+      if (modal) modal.hide();
+      document.getElementById('form-avatar').reset();
+    } else {
+      alert(data.message || 'No se pudo subir la imagen');
     }
   } catch (error) {
     alert('Error al conectar con el servidor');

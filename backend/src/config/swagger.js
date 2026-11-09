@@ -48,6 +48,9 @@ const swaggerSpec = {
     { name: 'Articulos' },
     { name: 'Incidencias' },
     { name: 'Reportes' },
+    { name: 'Areas' },
+    { name: 'Usuarios' },
+    { name: 'Avatar' },
   ],
   paths: {
     '/auth/login': {
@@ -174,7 +177,6 @@ const swaggerSpec = {
           {
             id_articulo: { type: 'integer', example: 1 },
             descripcion_pedido: { type: 'string', example: 'No enciende' },
-            prioridad: { type: 'integer', enum: [1, 2, 3], example: 2, description: '1 alta, 2 media, 3 baja' },
           },
           ['id_articulo', 'descripcion_pedido']
         ),
@@ -243,6 +245,80 @@ const swaggerSpec = {
           },
           ...respuestas(401, 403),
         },
+      },
+    },
+        '/incidencias/{id}/prioridad': {
+      patch: {
+        tags: ['Incidencias'],
+        summary: 'Cambia la prioridad de una incidencia En proceso asignada al usuario (empleado de Sistemas)',
+        security: seguro,
+        parameters: [idParam],
+        requestBody: cuerpo(
+          { prioridad: { type: 'integer', enum: [1, 2, 3], example: 1, description: '1 alta, 2 media, 3 baja' } },
+          ['prioridad']
+        ),
+        responses: respuestas(200, 400, 401, 403, 404),
+      },
+    },
+
+    '/areas': {
+      get: {
+        tags: ['Areas'],
+        summary: 'Lista las áreas activas',
+        security: seguro,
+        responses: respuestas(200, 401),
+      },
+    },
+
+    '/usuarios/sistemas': {
+      get: {
+        tags: ['Usuarios'],
+        summary: 'Lista los empleados del área de Sistemas (director)',
+        security: seguro,
+        responses: respuestas(200, 401, 403),
+      },
+    },
+
+    '/usuarios/cambiar-clave': {
+      patch: {
+        tags: ['Usuarios'],
+        summary: 'Cambia la contraseña del usuario logueado',
+        security: seguro,
+        requestBody: cuerpo(
+          {
+            claveActual: { type: 'string', example: 'Clave123!' },
+            claveNueva: { type: 'string', example: 'NuevaClave456!' },
+          },
+          ['claveActual', 'claveNueva']
+        ),
+        responses: respuestas(200, 400, 401, 403),
+      },
+    },
+
+    '/avatar': {
+      get: {
+        tags: ['Avatar'],
+        summary: 'Devuelve la ruta de la foto de perfil del usuario logueado',
+        security: seguro,
+        responses: respuestas(200, 401),
+      },
+      post: {
+        tags: ['Avatar'],
+        summary: 'Sube o reemplaza la foto de perfil (JPG, PNG o WEBP, máximo 2 MB)',
+        security: seguro,
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                required: ['avatar'],
+                properties: { avatar: { type: 'string', format: 'binary' } },
+              },
+            },
+          },
+        },
+        responses: respuestas(200, 400, 401),
       },
     },
   },

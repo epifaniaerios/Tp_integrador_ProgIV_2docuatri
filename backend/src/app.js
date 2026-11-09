@@ -17,6 +17,8 @@ import usuarioRoutes from './routes/usuarioRoutes.js';
 import areaRoutes from './routes/areaRoutes.js';
 import path from 'path';
 import fs from 'fs';
+import avatarRoutes from './routes/avatarRoutes.js';
+import { UPLOADS_DIR } from './config/upload.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,7 +28,9 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev')); // Registro de solicitudes HTTP
 
+
 // --- Registrar Rutas de la API ---
+app.use('/uploads', express.static(UPLOADS_DIR));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/categorias', categoriaRoutes);
 app.use('/api/v1/incidencias', incidenciaRoutes);
@@ -35,6 +39,7 @@ app.use('/api/v1/reportes', reporteRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/v1/usuarios', usuarioRoutes);
 app.use('/api/v1/areas', areaRoutes);
+app.use('/api/v1/avatar', avatarRoutes);
 
 // --- Ruta de Verificación de Salud de la API ---
 app.get('/api/v1/health', async (req, res) => {
