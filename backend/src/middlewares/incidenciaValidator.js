@@ -41,3 +41,8 @@ export const validarResolucion = [
     .isLength({ max: 250 }).withMessage('La descripción no puede superar los 250 caracteres'),
   manejarErrores,
 ];
+
+export const validarPrioridad = [
+  body('prioridad').isInt({ min: 1, max: 3 }).withMessage('La prioridad debe ser 1 (alta), 2 (media) o 3 (baja)'),
+  manejarErrores,
+];

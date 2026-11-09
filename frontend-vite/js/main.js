@@ -17,10 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-logout').addEventListener('click', cerrarSesion);
   document.getElementById('form-nueva-incidencia').addEventListener('submit', crearIncidencia);
 
-  // Solo el empleado municipal y director crea incidencias
-  if (usuarioSesion.rol === 1 || usuarioSesion.rol === 3) {
+  // Solo el empleado municipal crea incidencias
+  if (usuarioSesion.rol === 1) {
     document.getElementById('btn-nueva-incidencia').classList.remove('d-none');
     cargarArticulos();
+  }
+
+  // El empleado municipal puede consultar el listado de artículos
+  if (usuarioSesion.rol === 1) {
+    document.getElementById('link-articulos').classList.remove('d-none');
   }
 
   // Solo el empleado de Sistemas gestiona categorías y artículos
@@ -30,10 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //Se muestra el botón si es director
   if (usuarioSesion.rol === 3) {
-  const linkDirector = document.getElementById('link-dashboard-director');
-  if (linkDirector) linkDirector.classList.remove('d-none');
-}
-const selectPrioridad = document.getElementById('prioridad');
+    const linkDirector = document.getElementById('link-dashboard-director');
+    if (linkDirector) linkDirector.classList.remove('d-none');
+  }
+  const selectPrioridad = document.getElementById('prioridad');
   if (selectPrioridad) {
     const contenedorPrioridad = selectPrioridad.closest('.mb-3') || selectPrioridad;
     if (usuarioSesion.rol === 1) {
@@ -227,8 +232,8 @@ function botonesAccion(inc) {
   }
 
   // Si es Director o Sistemas, permite cambiar la prioridad si no está resuelta/cancelada
-  const puedeCambiarPrioridad = 
-    (rol === ROL.DIRECTOR || rol === ROL.SISTEMAS) && 
+  const puedeCambiarPrioridad =
+    rol === ROL.SISTEMAS &&
     ![ESTADO.RESUELTA, ESTADO.CANCELADA].includes(inc.id_estado);
 
   if (puedeCambiarPrioridad) {
@@ -295,11 +300,11 @@ async function crearIncidencia(e) {
 
   const titulo = document.getElementById('titulo').value.trim();
   const detalle = document.getElementById('descripcion').value.trim();
-  
+
   // Obtenemos el elemento si existe en el DOM
   const selectPrioridad = document.getElementById('prioridad');
   const prioridades = { ALTA: 1, MEDIA: 2, BAJA: 3 };
-  
+
   // Si el usuario es Empleado Municipal (Rol 1) o no existe el select, la prioridad queda fija en 2 (MEDIA)
   let prioridadFinal = 2;
   if (usuarioSesion.rol !== 1 && selectPrioridad) {
@@ -450,7 +455,7 @@ async function cambiarContrasenia(e) {
 
     if (res.ok && data.status === 'OK') {
       alert('¡Contraseña actualizada con éxito!');
-      
+
       // Cerrar modal y limpiar campos
       const modalEl = document.getElementById('modalCambiarClave');
       const modal = bootstrap.Modal.getInstance(modalEl);

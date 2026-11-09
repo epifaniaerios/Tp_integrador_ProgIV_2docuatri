@@ -57,16 +57,11 @@ export const obtenerPorId = async (id, usuario) => {
 export const crear = async (datos, usuario) => {
   const articulo = await incidenciaRepository.articuloActivo(datos.id_articulo);
   if (!articulo) throw crearError(404, 'El artículo indicado no existe o está inactivo');
-  // Si el rol del usuario es Empleado Municipal (ROLES.EMPLEADO_MUNICIPAL), 
-  // la prioridad se fuerza en 2 (Media), sin importar qué mande el frontend.
-  const prioridadAsignada = (usuario.rol === ROLES.EMPLEADO_MUNICIPAL) 
-    ? 2 
-    : (datos.prioridad || 2);
 
   const id = await incidenciaRepository.crear({
     id_articulo: datos.id_articulo,
     descripcion_pedido: datos.descripcion_pedido,
-    prioridad: datos.prioridadAsignada || 2, // 1 = alta, 2 = media, 3 = baja
+    prioridad: 2, // siempre media: la prioridad la ajusta después el empleado de Sistemas
     creado_por: usuario.id_usuario,
   });
   return incidenciaRepository.buscarPorId(id);
@@ -129,13 +124,17 @@ export const finalizar = async (id, descripcion_resolucion, usuario) => {
   return actualizada;
 };
 
-export const cambiarPrioridad = async (id, nuevaPrioridad) => {
+export const cambiarPrioridad = async (id, nuevaPrioridad, usuario) => {
   const incidencia = await incidenciaRepository.buscarPorId(Number(id));
   if (!incidencia) throw crearError(404, 'Incidencia no encontrada');
 
-  // Llama al repositorio para hacer la actualización en PostgreSQL
-  await incidenciaRepository.cambiarPrioridad(Number(id), nuevaPrioridad);
+  if (incidencia.asignado_a !== usuario.id_usuario) {
+    throw crearError(403, 'Solo podés cambiar la prioridad de incidencias asignadas a vos');
+  }
+  if (incidencia.id_estado !== ESTADOS.EN_PROCESO) {
+    throw crearError(400, 'Solo se puede cambiar la prioridad de incidencias En Proceso');
+  }
 
-  // Retorna la incidencia con sus datos actualizados
+  await incidenciaRepository.cambiarPrioridad(Number(id), nuevaPrioridad);
   return incidenciaRepository.buscarPorId(Number(id));
 };

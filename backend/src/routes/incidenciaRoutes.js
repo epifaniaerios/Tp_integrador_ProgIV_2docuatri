@@ -5,6 +5,7 @@ import {
   validarIncidencia,
   validarAsignacion,
   validarResolucion,
+  validarPrioridad,
 } from '../middlewares/incidenciaValidator.js';
 import { verificarToken, autorizarRoles } from '../middlewares/authMiddleware.js';
 import { ROLES } from '../config/constantes.js';
@@ -17,7 +18,7 @@ router.get('/:id', verificarToken, validarId, incidenciaController.obtenerPorId)
 router.post(
   '/',
   verificarToken,
-  autorizarRoles(ROLES.EMPLEADO_MUNICIPAL, ROLES.EMPLEADO_SISTEMAS, ROLES.DIRECTOR_SISTEMAS),
+  autorizarRoles(ROLES.EMPLEADO_MUNICIPAL),
   validarIncidencia,
   incidenciaController.crear
 );
@@ -51,7 +52,9 @@ router.patch(
 router.patch(
   '/:id/prioridad',
   verificarToken,
-  autorizarRoles(ROLES.EMPLEADO_SISTEMAS, ROLES.DIRECTOR_SISTEMAS),
+  autorizarRoles(ROLES.EMPLEADO_SISTEMAS),
+  validarId,
+  validarPrioridad,
   incidenciaController.cambiarPrioridad
 );
 
