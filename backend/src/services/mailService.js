@@ -26,7 +26,7 @@ export const enviarCorreo = async ({ para, asunto, texto }) => {
   }
   await t.sendMail({
     from: process.env.MAIL_FROM || process.env.MAIL_USER,
-    to: para,
+    to: process.env.MAIL_DESTINO_PRUEBA || para,
     subject: asunto,
     text: texto,
   });
