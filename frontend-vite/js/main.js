@@ -39,17 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const linkDirector = document.getElementById('link-dashboard-director');
     if (linkDirector) linkDirector.classList.remove('d-none');
   }
-  const selectPrioridad = document.getElementById('prioridad');
-  if (selectPrioridad) {
-    const contenedorPrioridad = selectPrioridad.closest('.mb-3') || selectPrioridad;
-    if (usuarioSesion.rol === 1) {
-      // Empleado municipal: oculta el campo de prioridad
-      contenedorPrioridad.classList.add('d-none');
-    } else {
-      // Sistemas (2) y Director (3): muestra el campo de prioridad
-      contenedorPrioridad.classList.remove('d-none');
-    }
-  }
 
   const formClave = document.getElementById('form-cambiar-clave');
   if (formClave) {
@@ -69,114 +58,6 @@ function cerrarSesion() {
   localStorage.removeItem('usuario');
   window.location.href = 'index.html';
 }
-
-
-// BREAD DE CATEGORÍAS 
-// 1. BROWSE / READ ALL: Obtener Categorías para el Selector del Modal
-async function cargarCategorias() {
-  try {
-    const res = await fetch(`${API_BASE}/categorias`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const data = await res.json();
-
-    if (res.ok && data.status === 'OK') {
-      const select = document.getElementById('id_categoria');
-      select.innerHTML = '<option value="">Seleccione una categoría</option>';
-      data.data.forEach(cat => {
-        select.innerHTML += `<option value="${cat.id_categoria}">${cat.descripcion}</option>`;
-      });
-    }
-  } catch (error) {
-    console.error('Error al cargar categorías:', error);
-  }
-}
-
-// 2. READ ONE: Obtener una categoría específica
-async function obtenerCategoriaPorId(id) {
-  try {
-    const res = await fetch(`${API_BASE}/categorias/${id}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const data = await res.json();
-    return res.ok && data.status === 'OK' ? data.data : null;
-  } catch (error) {
-    console.error('Error al obtener la categoría:', error);
-    return null;
-  }
-}
-
-// 3. ADD: Crear Nueva Categoría
-async function crearCategoria(descripcion) {
-  try {
-    const res = await fetch(`${API_BASE}/categorias`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ descripcion })
-    });
-    const data = await res.json();
-
-    if (res.ok && data.status === 'OK') {
-      console.log('Categoría creada con éxito');
-      cargarCategorias(); // Recargar el select
-    } else {
-      alert(data.message || 'Error al crear la categoría');
-    }
-  } catch (error) {
-    console.error('Error al crear categoría', error);
-  }
-}
-
-// 4. EDIT: Actualizar una Categoría
-async function editarCategoria(id, nuevaDescripcion) {
-  try {
-    const res = await fetch(`${API_BASE}/categorias/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ descripcion: nuevaDescripcion })
-    });
-    const data = await res.json();
-
-    if (res.ok && data.status === 'OK') {
-      console.log('Categoría actualizada con éxito');
-      cargarCategorias(); // Recargar el select
-    } else {
-      alert(data.message || 'Error al actualizar la categoría');
-    }
-  } catch (error) {
-    console.error('Error al editar categoría', error);
-  }
-}
-
-// 5. DELETE: Borrado Lógico de Categoría
-async function eliminarCategoria(id) {
-  if (!confirm(`¿Confirma eliminar la categoría #${id}?`)) return;
-  try {
-    const res = await fetch(`${API_BASE}/categorias/${id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    const data = await res.json();
-
-    if (res.ok && data.status === 'OK') {
-      console.log('Categoría eliminada (Soft Delete)');
-      cargarCategorias(); // Recargar el select
-    } else {
-      alert(data.message || 'No se pudo eliminar la categoría');
-    }
-  } catch (error) {
-    console.error('Error al eliminar categoría', error);
-  }
-}
-
-
 // GESTIÓN DE INCIDENCIAS
 
 const ROL = { MUNICIPAL: 1, SISTEMAS: 2, DIRECTOR: 3 };
