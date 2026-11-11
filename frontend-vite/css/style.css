@@ -1,0 +1,87 @@
+/* Adaptación general */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Pantallas menores a 768px */
+@media (max-width: 768px) {
+
+    .container {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Ajuste para los encabezados con botones en el dashboard y gestión */
+    .container .d-flex.justify-content-between {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+
+    /* Alineación de los botones de acción secundarios/principales en celular*/
+    .container .d-flex.justify-content-between .d-flex {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .container .d-flex.justify-content-between .d-flex .btn {
+        flex: 1;
+        text-align: center;
+        font-size: 0.8rem;
+        padding: 6px 8px;
+    }
+
+    /* Navbar: evita que el nombre del usuario y el botón de cerrar sesión rompan el diseño */
+    .navbar .container {
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: space-between;
+    }
+
+    .navbar .d-flex.align-items-center.gap-3 {
+        gap: 10px !important;
+        width: 100%;
+        justify-content: flex-end;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        padding-top: 8px;
+    }
+
+    /* Hace que los botones abarquen todo el ancho si es necesario */
+    .btn-mobile-block {
+        width: 100%;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-body {
+        padding: 1rem !important;
+    }
+
+    /* Ajuste para que las tablas no rompan el ancho en celulares */
+    .table-responsive {
+        border: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Reducción de tamaño en celdas de tablas para dispositivos móviles */
+    .table td, .table th {
+        font-size: 0.85rem;
+        padding: 8px 6px;
+    }
+}

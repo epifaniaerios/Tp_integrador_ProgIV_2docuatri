@@ -10,16 +10,31 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container">
       <a class="navbar-brand fw-bold" href="dashboard.html">Municipalidad - Incidencias</a>
+      
       <div class="d-flex align-items-center gap-3">
-        <a href="dashboard.html" class="btn btn-light btn-sm">Volver a incidencias</a>
-        <span id="user-info" class="text-white small fw-semibold"></span>
+        <div class="dropdown">
+          <button class="btn btn-link text-white text-decoration-none dropdown-toggle d-inline-flex align-items-center gap-2 p-0 border-0 shadow-none" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <img id="user-avatar" class="rounded-circle d-none" width="28" height="28" style="object-fit: cover;" alt="Avatar">
+            <span id="user-info" class="small fw-semibold">Cargando...</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item py-2" href="#foto-perfil">📷 Foto de perfil</a></li>
+            <li><a class="dropdown-item py-2" href="#cambiar-password">🔒 Cambiar Contraseña</a></li>
+          </ul>
+        </div>
+
         <button id="btn-logout" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
       </div>
     </div>
   </nav>
 
   <div class="container my-5">
-    <h3 class="fw-bold text-secondary mb-4">Artículos</h3>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="fw-bold text-secondary mb-0">Artículos y Categorías</h3>
+      <a href="dashboard.html" class="btn btn-outline-secondary btn-sm fw-semibold">
+        ← Volver a incidencias
+      </a>
+    </div>
 
     <div class="card border-0 shadow-sm">
       <div class="table-responsive">

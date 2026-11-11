@@ -1,4 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import * as bootstrap from 'bootstrap';
+
 
 const API_BASE = 'http://localhost:3000/api/v1';
 const token = localStorage.getItem('token');

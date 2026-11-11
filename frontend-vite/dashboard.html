@@ -9,41 +9,46 @@
 
 <body class="bg-light">
 
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container">
       <a class="navbar-brand fw-bold" href="#">Municipalidad - Incidencias</a>
       <div class="d-flex align-items-center gap-3">
-        <a id="link-articulos" href="articulos.html" class="btn btn-light btn-sm d-none">Artículos</a>
-        <a id="link-gestion" href="gestion.html" class="btn btn-light btn-sm d-none">Categorías y artículos</a>
-        <a id="link-dashboard-director" href="director.html" class="btn btn-warning btn-sm fw-semibold d-none">Panel
-          Director</a>
-        <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalAvatar">Foto de
-          perfil</button>
-        <button id="btn-modal-cambiar-clave" class="btn btn-outline-light btn-sm" data-bs-toggle="modal"
-          data-bs-target="#modalCambiarClave">Cambiar Contraseña</button>
-        <img id="user-avatar" class="rounded-circle d-none" width="32" height="32" style="object-fit: cover;"
-          alt="Foto de perfil">
-        <span id="user-info" class="text-white small fw-semibold"></span> <button id="btn-logout"
-          class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
+        
+        <div class="dropdown">
+          <button class="btn btn-link text-white text-decoration-none dropdown-toggle d-inline-flex align-items-center gap-2 p-0 border-0 shadow-none" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <img id="user-avatar" class="rounded-circle d-none" width="28" height="28" style="object-fit: cover;" alt="Avatar">
+            <span id="user-info" class="small fw-semibold">Cargando...</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
+            <li>
+              <button type="button" class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#modalAvatar">Foto de perfil</button>
+            </li>
+            <li>
+              <button type="button" class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#modalCambiarClave">Cambiar Contraseña</button>
+            </li>
+          </ul>
+        </div>
+
+        <button id="btn-logout" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
       </div>
     </div>
   </nav>
 
-  <!-- Contenido Principal -->
   <div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="fw-bold text-secondary">Registro de Incidencias</h3>
-      <button id="btn-nueva-incidencia" class="btn btn-primary d-none" data-bs-toggle="modal"
-        data-bs-target="#modalIncidencia">
-        + Nueva Incidencia
-      </button>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <h3 class="fw-bold text-secondary mb-0">Registro de Incidencias</h3>
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <a id="link-articulos" href="articulos.html" class="btn btn-outline-secondary btn-sm d-none">Artículos</a>
+        <a id="link-gestion" href="gestion.html" class="btn btn-outline-secondary btn-sm d-none">Categorías y artículos</a>
+        <a id="link-dashboard-director" href="director.html" class="btn btn-warning btn-sm fw-semibold d-none">Panel Director</a>
+        <button id="btn-nueva-incidencia" class="btn btn-primary btn-sm d-none" data-bs-toggle="modal" data-bs-target="#modalIncidencia">
+          + Nueva Incidencia
+        </button>
+      </div>
     </div>
 
-    <!-- Contenedor de Alertas -->
     <div id="alert-container"></div>
 
-    <!-- Tabla de Incidencias -->
     <div class="card border-0 shadow-sm">
       <div class="card-body p-0">
         <div class="table-responsive">
@@ -70,7 +75,6 @@
     </div>
   </div>
 
-  <!-- Modal para Nueva Incidencia -->
   <div class="modal fade" id="modalIncidencia" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -92,6 +96,18 @@
               </select>
             </div>
 
+<<<<<<< HEAD
+=======
+            <div class="mb-3" id="grupo-prioridad">
+              <label for="prioridad" class="form-label">Prioridad</label>
+              <select class="form-select" id="prioridad">
+                <option value="3">Baja</option>
+                <option value="2" selected>Media</option>
+                <option value="1">Alta</option>
+              </select>
+            </div>
+
+>>>>>>> 540dfa49bd8c3ba530abca95a6d9449b631217cc
             <div class="mb-3">
               <label for="descripcion" class="form-label">Descripción del problema</label>
               <textarea class="form-control" id="descripcion" rows="3" required></textarea>
@@ -106,26 +122,22 @@
     </div>
   </div>
 
-  <!-- Modal Cambiar Contraseña -->
-  <div class="modal fade" id="modalCambiarClave" tabindex="-1" aria-labelledby="modalCambiarClaveLabel"
-    aria-hidden="true">
+  <div class="modal fade" id="modalCambiarClave" tabindex="-1" aria-labelledby="modalCambiarClaveLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title" id="modalCambiarClaveLabel"> Cambiar Contraseña</h5>
+          <h5 class="modal-title" id="modalCambiarClaveLabel">Cambiar Contraseña</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="form-cambiar-clave">
           <div class="modal-body">
             <div class="mb-3">
               <label for="clave-actual" class="form-label">Contraseña Actual</label>
-              <input type="password" class="form-control" id="clave-actual" required
-                placeholder="Ingresá tu clave actual">
+              <input type="password" class="form-control" id="clave-actual" required placeholder="Ingresá tu clave actual">
             </div>
             <div class="mb-3">
               <label for="clave-nueva" class="form-label">Nueva Contraseña</label>
-              <input type="password" class="form-control" id="clave-nueva" required minlength="6"
-                placeholder="Mínimo 6 caracteres">
+              <input type="password" class="form-control" id="clave-nueva" required minlength="6" placeholder="Mínimo 6 caracteres">
             </div>
           </div>
           <div class="modal-footer">
@@ -136,7 +148,7 @@
       </div>
     </div>
   </div>
-  <!-- Modal Foto de perfil -->
+
   <div class="modal fade" id="modalAvatar" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -147,8 +159,7 @@
         <form id="form-avatar">
           <div class="modal-body">
             <label for="archivo-avatar" class="form-label">Elegí una imagen (JPG, PNG o WEBP, máximo 2 MB)</label>
-            <input type="file" class="form-control" id="archivo-avatar" accept="image/jpeg,image/png,image/webp"
-              required>
+            <input type="file" class="form-control" id="archivo-avatar" accept="image/jpeg,image/png,image/webp" required>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -158,6 +169,7 @@
       </div>
     </div>
   </div>
+
   <script type="module" src="./js/main.js"></script>
 </body>
 
